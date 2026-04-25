@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "seed": "node src/seed/seed.js"
+    "seed": "node src/seed/seed.js",
+    "generate:api": "node src/utils/generateOpenApi.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,7 @@
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "js-yaml": "^4.1.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.5.0",
     "swagger-jsdoc": "^6.2.8",
