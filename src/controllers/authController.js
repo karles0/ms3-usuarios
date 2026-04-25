@@ -32,10 +32,6 @@ export const login = catchAsync(async (req, res, next) => {
   
   const usuario = await Usuario.findOne({ email }).select('+password')
   
-  // DEBUG — borrar después
-  console.log('Usuario encontrado:', !!usuario)
-  console.log('Hash guardado:', usuario?.password)
-  console.log('Password recibida:', password)
   if (usuario) {
     const match = await usuario.correctPassword(password, usuario.password)
     console.log('Contraseñas coinciden:', match)
