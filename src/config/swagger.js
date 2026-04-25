@@ -1,11 +1,13 @@
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 
+const apiBaseUrl = process.env.API_BASE_URL || '/api/v1'
+
 const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
     info: { title: 'MS3 - Usuarios API', version: '1.0.0' },
-    servers: [{ url: 'http://localhost:8003/api/v1' }],  
+    servers: [{ url: apiBaseUrl }],
     components: {
       securitySchemes: {
         bearerAuth: {

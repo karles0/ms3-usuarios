@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import { faker } from '@faker-js/faker/locale/es'
 import dotenv from 'dotenv'
-import bcrypt from 'bcryptjs'
 import Usuario from '../models/Usuario.js'
 
 dotenv.config()
@@ -15,12 +14,12 @@ async function seed() {
   await Usuario.deleteMany({})
 
   // ── Admin fijo ──────────────────────────────────────
-  const passwordHash = await bcrypt.hash('admin123', 12)
   await Usuario.create({
     nombre: 'Admin',
     apellido: 'ShopCloud',
     email: 'admin@shopcloud.com',
-    password: passwordHash,
+    // Se guarda en texto plano para que el pre-save del modelo la hashee una sola vez.
+    password: 'admin123',
     telefono: '999000000',
     rol: 'admin',
     direccion: { calle: 'Av. Principal 123', ciudad: 'Lima', pais: 'Perú' }
