@@ -6,7 +6,7 @@ import Usuario from '../models/Usuario.js'
 dotenv.config()
 
 const TOTAL = 20000
-const BATCH = 500
+const BATCH = 100
 
 async function seed() {
   await mongoose.connect(process.env.MONGO_URI)
@@ -45,6 +45,7 @@ async function seed() {
     await Usuario.insertMany(lote, { ordered: false })
     insertados += lote.length
     console.log(`  ${insertados}/${TOTAL} usuarios insertados`)
+    await new Promise(r => setTimeout(r, 100))
   }
 
   console.log(' Seed completado')
