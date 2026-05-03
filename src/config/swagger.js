@@ -1,7 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 
-const apiBaseUrl = process.env.API_BASE_URL || '/api/v1'
+const apiBaseUrl = process.env.API_BASE_URL 
 
 const swaggerSpec = swaggerJsdoc({
   definition: {

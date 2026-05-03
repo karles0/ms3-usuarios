@@ -1,6 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import cors from 'cors'
 import usuarioRoutes from './routes/usuarioRoutes.js'
 import { swaggerUi, swaggerSpec } from './config/swagger.js'
 import AppError from './utils/AppError.js'
@@ -11,7 +12,12 @@ dotenv.config()
 const app = express()
 app.use(express.json())
 
-const port = process.env.PORT || 8003
+app.use(cors({                          
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
+const port = process.env.PORT 
 const mongoUri = process.env.MONGO_URI 
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
