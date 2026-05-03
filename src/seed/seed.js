@@ -6,10 +6,13 @@ import Usuario from '../models/Usuario.js'
 dotenv.config()
 
 const TOTAL = 20000
-const BATCH = 10  // lotes pequeños para no saturar RAM
+const BATCH = 20   // puedes subir a 100 si va fluido
 
 async function seed() {
-  await mongoose.connect(process.env.MONGO_URI)
+  await mongoose.connect(process.env.MONGO_URI, {
+    maxPoolSize: 5 // importante para poca RAM
+  })
+
   console.log('Conectado. Borrando datos previos...')
   await Usuario.deleteMany({})
 
@@ -21,43 +24,65 @@ async function seed() {
     password: 'admin123',
     telefono: '999000000',
     rol: 'admin',
-    direccion: { calle: 'Av. Principal 123', ciudad: 'Lima', pais: 'Perú' }
+    direccion: {
+      calle: 'Av. Principal 123',
+      ciudad: 'Lima',
+      pais: 'Perú'
+    }
   })
-  console.log('Admin creado — email: admin@shopcloud.com / pass: admin123')
 
-  // 20,000 usuarios normales en lotes pequeños
+  console.log('Admin creado')
+
   let insertados = 0
 
   while (insertados < TOTAL) {
-    const lote = Array.from({ length: BATCH }, () => ({
-      nombre:   faker.person.firstName(),
-      apellido: faker.person.lastName(),
-      email:    faker.internet.email(),
-      password: '$2b$12$EV1Zyexp8gF9sjrPAPIcrO/NwEr9OF1KQsswSCn.VDsFPuvFUFqay',
-      telefono: faker.phone.number(),
-      rol:      'user',
-      direccion: {
-        calle:  faker.location.streetAddress(),
-        ciudad: faker.location.city(),
-        pais:   'Perú'
-      }
-    }))
+    const lote = []
 
-    await Usuario.insertMany(lote, { ordered: false })
+    for (let i = 0; i < BATCH && insertados < TOTAL; i++) {
+      const id = insertados + i
+
+      lote.push({
+        nombre: faker.person.firstName(),
+        apellido: faker.person.lastName(),
+
+        // 🔥 EMAIL ÚNICO SIN COSTO
+        email: `user_${id}@shopcloud.com`,
+
+        password: '$2b$12$EV1Zyexp8gF9sjrPAPIcrO/NwEr9OF1KQsswSCn.VDsFPuvFUFqay',
+        telefono: faker.phone.number(),
+        rol: 'user',
+        direccion: {
+          calle: faker.location.streetAddress(),
+          ciudad: faker.location.city(),
+          pais: 'Perú'
+        }
+      })
+    }
+
+    try {
+      await Usuario.insertMany(lote, {
+        ordered: false,
+        lean: true // ⚡ menos overhead de mongoose
+      })
+    } catch (e) {
+      if (e.code !== 11000) throw e
+      // ignoramos duplicados (aunque ya no deberían existir)
+    }
+
     insertados += lote.length
-    console.log(`  ${insertados}/${TOTAL} usuarios insertados`)
+    console.log(`${insertados}/${TOTAL}`)
 
-    // Pausa entre lotes para liberar memoria
-    await new Promise(r => setTimeout(r, 300))
+    // 🧠 liberar CPU / RAM
+    await new Promise(r => setTimeout(r, 100))
 
-    // Pausa más larga cada 1000 registros
-    if (insertados % 1000 === 0) {
-      console.log(`  Pausa de recuperacion en ${insertados}...`)
-      await new Promise(r => setTimeout(r, 2000))
+    // 🧠 pausa más larga cada cierto tiempo
+    if (insertados % 2000 === 0) {
+      console.log('Pausa de recuperación...')
+      await new Promise(r => setTimeout(r, 1000))
     }
   }
 
-  console.log('Seed completado')
+  console.log('Seed completado 🚀')
   await mongoose.disconnect()
 }
 
