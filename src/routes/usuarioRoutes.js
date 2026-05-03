@@ -82,8 +82,7 @@ router.use(protect)
  *       401:
  *         description: No autorizado
  */
-router.get('/', usuarioController.getAllUsuarios)
-
+router.get('/', protect, restrictTo('admin'), usuarioController.getAllUsuarios)
 /**
  * @swagger
  * /usuarios/{id}:

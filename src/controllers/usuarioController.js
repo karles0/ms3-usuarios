@@ -7,17 +7,28 @@ const aplicarDTO = (usuario, rol) =>
   rol === 'admin' ? toUsuarioAdminDTO(usuario) : toUsuarioPublicoDTO(usuario)
 
 export const getAllUsuarios = catchAsync(async (req, res, next) => {
-  const { page = 1, limit = 20 } = req.query
+  const page = parseInt(req.query.page) || 1
+  const limitParam = req.query.limit
+
+  // 🔥 soporta ingesta sin romper memoria
+  const limit = parseInt(limitParam) || 20
+  const skip = (page - 1) * limit
+
   const usuarios = await Usuario.find()
-    .skip((page - 1) * limit)
-    .limit(Number(limit))
+    .select('-password') // 🔥 importante
+    .skip(skip)
+    .limit(limit)
+    .lean()
+
   const total = await Usuario.countDocuments()
 
   res.status(200).json({
     status: 'success',
-    data: usuarios.map(u => aplicarDTO(u, req.user.rol)),
+    results: usuarios.length,
     total,
-    page: Number(page)
+    page,
+    totalPages: Math.ceil(total / limit),
+    data: usuarios.map(u => aplicarDTO(u, req.user.rol))
   })
 })
 
