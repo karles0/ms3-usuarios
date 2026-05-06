@@ -24,7 +24,7 @@ const mongoUri = process.env.MONGO_URI
 app.use('/health', healthRoutes)
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-app.use('/api/v1/usuarios', usuarioRoutes)
+app.use('/usuarios', usuarioRoutes)
 
 app.all('/{*path}', (req, res, next) => {  next(new AppError(`No se encontró ${req.originalUrl} en este servidor`, 404))
 })
