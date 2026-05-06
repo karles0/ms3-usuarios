@@ -2,6 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import * as authController from './controllers/authController.js'
 import usuarioRoutes from './routes/usuarioRoutes.js'
 import healthRoutes from './routes/healthRoutes.js'
 import { swaggerUi, swaggerSpec } from './config/swagger.js'
@@ -23,6 +24,11 @@ const mongoUri = process.env.MONGO_URI
 
 app.use('/health', healthRoutes)
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+// Public auth endpoints kept here as an explicit fallback for deployments that
+// do not preserve the router mount for these routes.
+app.post('/usuarios/signup', authController.signup)
+app.post('/usuarios/login', authController.login)
 
 app.use('/usuarios', usuarioRoutes)
 
