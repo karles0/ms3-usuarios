@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import usuarioRoutes from './routes/usuarioRoutes.js'
+import healthRoutes from './routes/healthRoutes.js'
 import { swaggerUi, swaggerSpec } from './config/swagger.js'
 import AppError from './utils/AppError.js'
 import { globalErrorHandler } from './middlewares/errorMiddleware.js'
@@ -20,6 +21,7 @@ app.use(cors({
 const port = process.env.PORT 
 const mongoUri = process.env.MONGO_URI 
 
+app.use('/health', healthRoutes)
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.use('/api/v1/usuarios', usuarioRoutes)

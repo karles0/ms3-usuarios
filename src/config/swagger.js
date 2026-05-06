@@ -18,6 +18,7 @@ const swaggerSpec = swaggerJsdoc({
       }
     },
     tags: [
+      { name: 'Sistema', description: 'Endpoints de operación básica' },
       { name: 'Autenticación', description: 'Registro e inicio de sesión' },
       { name: 'Usuarios', description: 'Gestión de usuarios (requiere token)' }
     ]

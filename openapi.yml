@@ -11,11 +11,21 @@ components:
       scheme: bearer
       bearerFormat: JWT
 tags:
+  - name: Sistema
+    description: Endpoints de operación básica
   - name: Autenticación
     description: Registro e inicio de sesión
   - name: Usuarios
     description: Gestión de usuarios (requiere token)
 paths:
+  /health:
+    get:
+      summary: Verifica que la API esté disponible
+      tags:
+        - Sistema
+      responses:
+        '200':
+          description: API funcionando correctamente
   /usuarios/signup:
     post:
       summary: Crear una nueva cuenta (Registro)
